@@ -5469,7 +5469,7 @@ func.func @scatter_variadic(%arg0: tensor<3xi32>, %arg1: tensor<1x1xi32>,
 
 
 #SV = #sparse_tensor.encoding<{
-  lvlTypes = ["compressed"]
+  map = (d0) -> (d0 : compressed)
 }>
 
 func.func @is_compatible_sparse_mix_non_sparse(%arg0: tensor<1xf32>, %arg1: tensor<1xf32, #SV>) {
@@ -5644,6 +5644,32 @@ func.func @dynamic_iota_unranked() -> tensor<*xf32> {
   %0 = stablehlo.constant dense<[4]> : tensor<1xi64>
   %1 = stablehlo.dynamic_iota %0, dim = 0 : (tensor<1xi64>) -> tensor<*xf32>
   func.return %1 : tensor<*xf32>
+}
+
+// -----
+
+func.func @dynamic_iota_unranked_large() -> tensor<*xf32> {
+  %0 = stablehlo.constant dense<[4]> : tensor<1xi64>
+  %1 = stablehlo.dynamic_iota %0, dim = 3 : (tensor<1xi64>) -> tensor<*xf32>
+  func.return %1 : tensor<*xf32>
+}
+
+// -----
+
+func.func @dynamic_iota_invalid_iota_dimension_negative() -> tensor<?xf32> {
+  // expected-error@+2 {{iota dimension cannot go beyond the output rank or be negative}}
+  %0 = stablehlo.constant dense<[4]> : tensor<1xi64>
+  %1 = stablehlo.dynamic_iota %0, dim = -1 : (tensor<1xi64>) -> tensor<?xf32>
+  func.return %1 : tensor<?xf32>
+}
+
+// -----
+
+func.func @dynamic_iota_invalid_iota_dimension_too_big() -> tensor<?xf32> {
+  %0 = stablehlo.constant dense<[4]> : tensor<1xi64>
+  // expected-error@+1 {{iota dimension cannot go beyond the output rank or be negative}}
+  %1 = stablehlo.dynamic_iota %0, dim = 2 : (tensor<1xi64>) -> tensor<?xf32>
+  func.return %1 : tensor<?xf32>
 }
 
 // -----

@@ -29,10 +29,10 @@ limitations under the License.
 #include "mlir/IR/Region.h"
 #include "mlir/IR/SymbolTable.h"
 #include "mlir/Support/LLVM.h"
-#include "stablehlo/reference/InterpreterValue.h"
 #include "stablehlo/reference/NumPy.h"
 #include "stablehlo/reference/Ops.h"
 #include "stablehlo/reference/ProcessGrid.h"
+#include "stablehlo/reference/Value.h"
 
 #define GET_OP_CLASSES
 #include "stablehlo/reference/InterpreterOps.cpp.inc"
@@ -174,8 +174,8 @@ SmallVector<InterpreterValue> evalRunParallelOp(
       auto evalWrapper = [&](Region &region, ArrayRef<InterpreterValue> args,
                              ProcessId processId) {
         Process process{processId, &processGrid};
-        return eval(region, args, &process, /*parent=*/nullptr,
-                    /*fallback=*/nullptr);
+        return eval(region, args, /*config=*/nullptr, &process,
+                    /*parent=*/nullptr);
       };
 
       auto numArgs = func.getBody().front().getArguments().size();

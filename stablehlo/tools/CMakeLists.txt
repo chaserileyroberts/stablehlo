@@ -33,6 +33,7 @@ set(LIBS
         StablehloTestUtils
         StablehloPasses
         InterpreterOps
+        StablehloLinalgTransforms
         StablehloTOSATransforms
         )
 add_llvm_executable(stablehlo-opt StablehloOptMain.cpp)
@@ -55,11 +56,13 @@ target_link_libraries(stablehlo-translate PRIVATE
   CheckOps
   InterpreterOps
   StablehloOps
-  StablehloReferenceInterpreterValue
+  StablehloReferenceApi
+  StablehloReferenceErrors
   StablehloReferenceOps
   StablehloReferenceProcessGrid
   StablehloReferenceScope
   StablehloReferenceTensor
+  StablehloReferenceValue
   StablehloRegister
   StablehloSerialization
   VhloOps
